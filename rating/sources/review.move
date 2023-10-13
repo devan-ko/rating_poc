@@ -99,6 +99,10 @@ module rating::review {
 
         transfer::public_transfer(review, service)
     }
+
+    public fun calculate_total_score() {
+        
+    }
     
 
 
