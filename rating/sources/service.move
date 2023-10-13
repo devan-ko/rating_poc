@@ -1,4 +1,18 @@
 module rating::service {
+    // Functional requirements
+    // - Service object belongs to a single address
+    // - Service object has to be registered by the owner's address 
+    // - Service owner address could have various services
+    // - Service object has to be provided with relevant information 
+    // such as cuisine type, location, google map url, operating hours, url, pictures urls
+    // - Service object has to have a pool of incentive to be distributed to users who provide reviews
+    // - Service object's pool creation has to be done by the owner
+    // - Each service could have its own respective pool
+    // - Services belongs to a single address could share the same pool
+    // - Service object has verified user list
+    // - Service object can add verified user to its list
+    // - Service object register to SeriveLists object to show listed services to users
+    // 
     use std::string::String;
     use sui::balance::{Self,Balance};
     use sui::vec_set::{Self,VecSet};
@@ -10,13 +24,26 @@ module rating::service {
     // Constants
 
     // structs
+    // OwnerCap will be send to the service owner
     struct OwnerCap has key { id: UID }
 
-    struct ServiceLists has key, store {
+    // Service List will show the regiered services to users this will be shared object
+    // because of the this Lists has to be amended by the service owner
+    struct Registery has key, store {
         id: UID,
         service_list: VecSet<SERVICE>,
     }
 
+    // Service object belongs to a single address
+    // It has
+    // Its own ID, 
+    // Owner's address,
+    // Pool object,
+    // Cuisine type, location, google map url, operating hours, url, pictures urls
+    // Verified user list which is VectorSet of address type
+    // VectorSet could be prevent address's duplication
+    // Review list which is Vec of Review struct
+    // 
     struct SERVICE has key, store, drop {
         id: UID,
         owner: address,
@@ -92,48 +119,53 @@ module rating::service {
     }
 
     // init
+    // shared object transfer which is Registry
+    fun init () {
+        let service_list = Registery{
+            id: object::new(ctx),
+            service_list: VecSet::empty(),
+        }
+        transfer::share_object(service_list)
+
+    }
     
+
+    // Service register to Service List
+    public fun register() {
+
+    }
+    
+    // service object creation
+    public fun create() {
+
+    }
+
+    // pool creation
+    public fun create_pool(){
+
+    }
+    // link pool to service
+    public fun set_pool(_: &OwnerCap, service: &SERVICE, pool: &POOL) {
+        service.pool = pool;
+    }
+
+    //
+
 
 
     // verified user register
-    public fun register_verified_user(service: &SERVICE, user: address) {
+    public fun register_verified_user( _: &OwnerCap, service: &SERVICE, user: address) {
         assert!(user_duplicated(user, service),EUserAlreadyExists);
         let mut existing_lists = verified_user_lists(service);
         existing_lists.insert<address>(user);
     }
-
+    // Prior to adding verified user, Check duplication
     public fun user_duplicated(user: address, service: &SERVICE): bool {
         let lists = verified_user_lists(&service);
         lists.contains<address>(user)
     }
 
-    // pool create 
-    public fun create_incentive_pool(
-        _: &OwnerCap,
-
-    ){
-
-    }
-
-    // service register
-    public fun register_service(
-        _: &OwnerCap,
-        owner: address,
-        cuisine_type: String,
-        location: String,
-        google_map_url: String,
-        operating_hours: String,
-        url: String,
-        pictures_urls: vector<u8>,
-        provided_incentive_amount: Balance<SUI>,
-    ) {
-
-        
-    }
-
-    //send review incentive
-
-    //add review to service :: Using Dynamic fields
+   
 
 
 
