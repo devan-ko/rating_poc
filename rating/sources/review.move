@@ -28,6 +28,8 @@ module rating::review {
         body: String,
         up_vote: u8,
         down_vote: u8,
+        total_score: u8,
+        decay_rate: u8,
         writer: address,
         full_view_authorized_users: vector<address>,
     }
@@ -45,8 +47,11 @@ module rating::review {
     public fun body(review: &Review): &String {
         review.body_full
     }
-    public fun rating(review: &Review): u8 {
-        review.rating
+    public fun total_score(review: &Review): u8 {
+        review.total_score
+    }
+    public fun decay_rate(review: &Review): u8 {
+        review.decay_rate
     }
     public fun vote(review: &Review): (u8,u8) {
         (&review.up_vote, &review.down_vote)
