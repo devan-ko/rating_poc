@@ -17,6 +17,7 @@ module rating::service {
     use sui::balance::{Self,Balance};
     use sui::vec_set::{Self,VecSet};
     use std::vector;
+    use sui::object::{Self, UID, ID};
 
     use review::Review;
     //Error codes
@@ -59,7 +60,9 @@ module rating::service {
         rating: u8,
     }
 
-    struct VerfriedUser has key { id: UID }
+    struct VerfriedUser has key { 
+        id: UID,
+        user: ID }
 
     struct POOL has key, store, drop {
         id: UID,
