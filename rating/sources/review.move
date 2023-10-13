@@ -1,6 +1,7 @@
 module rating::review {
     // Functional requirements
-    // - Reviewer is also consumer
+    // - Reviewer is also can be consumer
+    // - Reviewer can post review to service
     // - 
 
     use sui::object::{Self, UID};
@@ -59,7 +60,6 @@ module rating::review {
 
     // register auhtourized user
     public fun register_authorized_user(review: &Review, user: address) {
-        
         let list = full_view_authorized_users(review);
          vector::push_back(&mut list, user);
     }
