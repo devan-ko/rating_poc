@@ -1,9 +1,16 @@
 module rating::review {
+    // Functional requirements
+    // - Reviewer is also consumer
+    // - 
+
     use sui::object::{Self, UID};
     use std::string::String;
     use std::vector;
+    use sui::tx_context::{Self, TxContext};
+    use sui::transfer;
 
     // Error codes
+    const EIsNotAuthorizedUser:u8 = 0;
 
     // Contants
 
@@ -52,16 +59,43 @@ module rating::review {
 
     // register auhtourized user
     public fun register_authorized_user(review: &Review, user: address) {
+        
         let list = full_view_authorized_users(review);
-
          vector::push_back(&mut list, user);
     }
 
     public fun is_authorized_user(review: &Review, user: address):bool {
-        review.full_view_authorized_users.contains(user)
+        let user_lists = full_view_authorized_users(review);
+        if (vector::contains(user_lists, user)) {
+            true;
+        } else {
+           false;
+        };
     }
 
-    public fun 
+    public fun post_to_service(
+        head: String,
+        body: String,
+        writer: address,
+        full_view_authorized_users: vector<address>,
+        service: address,
+        ctx: &mut TxContext
+    ) {
+        let review_body = body;
+        sender = tx_context::sender(ctx);
+        let review = Review{
+            id: object::id(ctx),
+            body: review_body,
+            up_vote: 0,
+            down_vote: 0,
+            writer: sender,
+            full_view_authorized_users: vector::empty()
+        };
+
+        transfer::public_transfer(review, service)
+    }
+    
+
 
 
 
