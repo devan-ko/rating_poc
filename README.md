@@ -2,5 +2,10 @@
 
 ## Seq diagram -none escrow- 
 -----
-![none_escrow](Seq%20Diagram-none%20use%20escrow.drawio.svg)
+![none_escrow](Seq_Diagram_none_use_escrow.drawio.svg)
+-----
+
+## Seq diagram -use escrow- 
+-----
+![escrow](Seq_Diagram_use_escrow.drawio.svg)
 -----
