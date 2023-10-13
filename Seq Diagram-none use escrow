@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-10-13T09:23:52.100Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="apEzRMcoa_oAJWdRF8oZ" version="22.0.4" type="github">
+<mxfile host="app.diagrams.net" modified="2023-10-13T09:41:30.975Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="swdnST6aqHWfJ0mq2F_V" version="22.0.4" type="github">
   <diagram name="Page-1" id="2YBvvXClWsGukQMizWep">
     <mxGraphModel dx="934" dy="1292" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -45,10 +45,7 @@
             <mxPoint x="10" y="-3" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Td_pm4XAgTZ-Ek3w1lay-14" value="Text" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry x="195" y="128" width="50" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="Td_pm4XAgTZ-Ek3w1lay-21" value="Incentive ,&lt;br&gt;verified user marks object&amp;nbsp;" style="html=1;whiteSpace=wrap;" parent="1" vertex="1">
+        <mxCell id="Td_pm4XAgTZ-Ek3w1lay-21" value="Incentive &amp;amp;&lt;br&gt;verified reviewer mark" style="html=1;whiteSpace=wrap;" parent="1" vertex="1">
           <mxGeometry x="195" y="260" width="125" height="50" as="geometry" />
         </mxCell>
         <mxCell id="Td_pm4XAgTZ-Ek3w1lay-30" value="" style="endArrow=classic;html=1;rounded=0;jumpStyle=none;jumpSize=0;" parent="1" edge="1">
