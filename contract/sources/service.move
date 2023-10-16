@@ -19,20 +19,25 @@ module rating::service {
     use std::vector;
     use sui::object::{Self, UID, ID};
 
-    use review::Review;
+    use contract::Review;
     //Error codes
     const EUserAlreadyExists: u32 = 0;
+    const ENoPicture: u32 = 1;
     // Constants
 
     // structs
-    // OwnerCap will be send to the service owner
-    struct OwnerCap has key { id: UID }
 
     // Service List will show the regiered services to users this will be shared object
     // because of the this Lists has to be amended by the service owner
     struct Registery has key, store {
         id: UID,
-        service_list: VecSet<SERVICE>,
+        service_list: VecSet<RegisterService>,
+    }
+
+    struct RegisterService has key {
+        id: ID,
+        owner: address,
+
     }
 
     // Service object belongs to a single address
@@ -56,19 +61,16 @@ module rating::service {
         url: String,
         pictures_urls: vector<u8>,
         verified_user_lists: VecSet<address>,
-        review_list: vec<Review>,
+        review_list: vector<Review>,
         rating: u8,
     }
 
     struct VerfriedUser has key { 
         id: UID,
-        user: ID }
-
-    struct POOL has key, store, drop {
-        id: UID,
-        pool_address: address,
-        provided_incentive: Balance<SUI>,
+        user: address 
     }
+
+
 
     // struct SERVICE_OWNER has key, store, drop {
     //     id: UID,
@@ -80,12 +82,8 @@ module rating::service {
         service.owner
     }
 
-    public fun pool(service: &SERVICE): {address, Balance<SUI>} {
+    public fun pool(service: &SERVICE): (address, Balance<SUI>) {
        pool_details(&service.pool)
-    }
-
-    public fun pool_details(pool: &POOL): {address, Balance<SUI>} {
-        {pool.addr, pool.balance}
     }
 
     public fun cuisine_type(service: &SERVICE): String {
@@ -109,11 +107,11 @@ module rating::service {
     }
 
     public fun pictures_urls(service: &SERVICE): vector<u8> {
-        assert!(service.service_pictures_url.len() > 0, "No pictures uploaded"
+        assert!(service.service_pictures_url.length() == 0, ENoPicture);
         service.service_pictures_url
     }
 
-    public fun verified_user_lists(service: &SERVICE): &VecSet<address> {
+    public fun verified_user_lists(service: &SERVICE): VecSet<address> {
         service.verified_user_lists
     }
 
@@ -127,14 +125,14 @@ module rating::service {
         let service_list = Registery{
             id: object::new(ctx),
             service_list: VecSet::empty(),
-        }
+        };
         transfer::share_object(service_list)
 
     }
     
 
     // Service register to Service List
-    public fun register() {
+    public fun create_service_registry() {
 
     }
     
@@ -143,12 +141,9 @@ module rating::service {
 
     }
 
-    // pool creation
-    public fun create_pool(){
 
-    }
     // link pool to service
-    public fun set_pool(_: &OwnerCap, service: &SERVICE, pool: &POOL) {
+    public fun insert_pool(_: &OwnerCap, service: &SERVICE, pool: &POOL) {
         service.pool = pool;
     }
 
@@ -159,8 +154,8 @@ module rating::service {
     // verified user register
     public fun register_verified_user( _: &OwnerCap, service: &SERVICE, user: address) {
         assert!(user_duplicated(user, service),EUserAlreadyExists);
-        let mut existing_lists = verified_user_lists(service);
-        existing_lists.insert<address>(user);
+        let existing_lists = verified_user_lists(service);
+        existing_lists.insert<address>(user)
     }
     // Prior to adding verified user, Check duplication
     public fun user_duplicated(user: address, service: &SERVICE): bool {
