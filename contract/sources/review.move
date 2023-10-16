@@ -12,6 +12,8 @@ module contract::review {
     use sui::sui::SUI;
 
     // Error codes
+    const ENotEnoughTip: u32 = 0;
+    const EReviewerIsNotReviewWriter : u32 = 1;
     // Constants
     // Struct
     struct Obj has key, store{
@@ -27,20 +29,11 @@ module contract::review {
         full_view_authorized_users: vector<address>,
     }
 
-    // struct AuthorityCap has key {
-    //     id: UID,
-    // }
-    // struct Authorized has key, store{
-    //     id: UID,
-    //     cap: AuthorityCap, 
-    //     authority_owner: address,
-    //     user_list: vector<address>,
-    // }
-
-
-    // struct Req_Authority has key {
-
-    // }
+    struct Authority_Ticket has key {
+        id: UID,
+        review_addr: address,
+        writer:address
+    }
 
      // ===== Public view functions =====
     public fun head(review: &Obj): String {
@@ -120,23 +113,54 @@ module contract::review {
 
     }
 
-    public fun calculate_total_score(
+    public fun total_score_calculation(
         intrinsic_value: u8, 
         extrinsic_value: u8, 
-        decay_rate: u8,
         verfication_multiplier: u8):u8 {
+            let decay_rate = decay_rate(review);
             let total_score = (intrinsic_value + extrinsic_value) * decay_rate * verfication_multiplier;
             total_score
     }
 
-    // public fun send_tip(
-    //     reviewer: address,
-    //     ctx : &mut TxContext,
-    //     tip_amount: Coin<SUI>,
-    //     review_obj: address) {
-    //         let sender = tx_context::sender(ctx);
+    public fun update_total_score(intrinsic_value: u8, extrinsic_value: u8, verfication_multiplier: u8){
+        let total_score = total_score_calculation();
+    }
 
-    //     }
+    public fun update_votes(up_vote: u8, down_vote: u8, review: &mut Obj){
+        review.up_vote = up_vote;
+        review.down_vote = down_vote;
+    }
+
+    public fun update_decay_rate(review: &mut Obj, decay_rate: u8){
+        review.decay_rate = decay_rate;
+    }
+
+    public fun send_full_access_req(
+        review_obj_address: address,
+        reviewer: address,
+        tip_amount: Coin<SUI>,
+        review_obj: &Obj,
+        _ : &mut TxContext,
+        ) {
+            assert!(review_obj.writer != reviewer, EReviewerIsNotReviewWriter);
+            let minumum_tip = tip(review_obj);
+            assert!(tip_amount < minumum_tip, ENotEnoughTip);
+            let sender = tx_context::sender(ctx);
+            let ticket = create_full_review_access_auth_req(review_obj_address, reviewer);
+            
+        }
+
+    public fun create_full_review_access_auth_req (
+        review_obj:address,
+        reviewer:address,
+    ): Authority_Ticket {
+        let ticket = Authority_Ticket {
+            id: object::new(ctx),
+            review_addr: review_obj,
+            writer: reviewer,
+        };
+        ticket
+    }
 
     
 
