@@ -3,7 +3,7 @@ module contract::review {
     // - Reviewer is also can be consumer
     // - Reviewer can post review to service
     // - 
-    use sui::coin::{Self, Coin};
+    use sui::coin::{Coin, Self};
     use sui::object::{Self, UID};
     use std::string::String;
     use std::vector;
@@ -12,8 +12,8 @@ module contract::review {
     use sui::sui::SUI;
 
     // Error codes
-    const ENotEnoughTip: u32 = 0;
-    const EReviewerIsNotReviewWriter : u32 = 1;
+    const ENotEnoughTip: u64 = 1;
+    const EReviewerIsNotReviewWriter: u64 = 2;
     // Constants
     // Struct
     struct Obj has key, store{
@@ -29,7 +29,7 @@ module contract::review {
         full_view_authorized_users: vector<address>,
     }
 
-    struct Authority_Ticket has key {
+    struct Authority_Ticket has key, store {
         id: UID,
         review_addr: address,
         writer:address
@@ -56,7 +56,7 @@ module contract::review {
     }
 
     public fun tip(review: &Obj): u64 {
-       coin::value(& review.minumum_tip)
+       coin::value(&review.minumum_tip)
     }    
 
     public fun full_view_authorized_users(review: &Obj): vector<address> {
@@ -116,14 +116,20 @@ module contract::review {
     public fun total_score_calculation(
         intrinsic_value: u8, 
         extrinsic_value: u8, 
-        verfication_multiplier: u8):u8 {
-            let decay_rate = decay_rate(review);
-            let total_score = (intrinsic_value + extrinsic_value) * decay_rate * verfication_multiplier;
+        verfication_multiplier: u8,
+        review: &Obj):u8 {
+            let dr = decay_rate(review);
+            let is = intrinsic_value;
+            let es = extrinsic_value;
+            let vm = verfication_multiplier;
+            let total_score = (is + es) * dr * vm;
             total_score
     }
 
-    public fun update_total_score(intrinsic_value: u8, extrinsic_value: u8, verfication_multiplier: u8){
-        let total_score = total_score_calculation();
+    public fun update_total_score(intrinsic_value: u8, extrinsic_value: u8, verfication_multiplier: u8, review: &mut Obj){
+        let total_score = total_score_calculation(intrinsic_value,extrinsic_value, verfication_multiplier,review);
+        review.total_score = total_score;
+
     }
 
     public fun update_votes(up_vote: u8, down_vote: u8, review: &mut Obj){
@@ -138,21 +144,23 @@ module contract::review {
     public fun send_full_access_req(
         review_obj_address: address,
         reviewer: address,
-        tip_amount: Coin<SUI>,
+        tip_amount: u64,
         review_obj: &Obj,
-        _ : &mut TxContext,
+        ctx : &mut TxContext,
         ) {
             assert!(review_obj.writer != reviewer, EReviewerIsNotReviewWriter);
             let minumum_tip = tip(review_obj);
-            assert!(tip_amount < minumum_tip, ENotEnoughTip);
+            assert!( tip_amount < minumum_tip, ENotEnoughTip);
             let sender = tx_context::sender(ctx);
-            let ticket = create_full_review_access_auth_req(review_obj_address, reviewer);
+            let ticket = create_full_review_access_auth_req(review_obj_address, reviewer, ctx);
+            transfer::transfer(ticket, sender)
             
         }
 
     public fun create_full_review_access_auth_req (
         review_obj:address,
         reviewer:address,
+        ctx : &mut TxContext,
     ): Authority_Ticket {
         let ticket = Authority_Ticket {
             id: object::new(ctx),

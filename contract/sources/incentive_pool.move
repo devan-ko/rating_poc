@@ -1,9 +1,8 @@
 module contract::incentive_pool {
     use sui::object::{Self, UID};
-     use sui::transfer::{Self};
     use sui::tx_context::{Self, TxContext};
 
-    struct POOL has key, store, drop {
+    struct POOL has key, store {
         id: UID,
         addr: address,
         owner: address,
@@ -15,15 +14,14 @@ module contract::incentive_pool {
     } 
 
     // pool creation
-    public fun create_pool(pool_addr: address, owner: address, incentive_amount: u64, ctx: &mut TxContext): (Pool, address) {
-        let new_pool_owner = transfer::sender(ctx);
+    public fun create_pool(pool_addr: address, incentive_amount: u64, ctx: &mut TxContext): (POOL, address) {
+        let new_pool_owner = tx_context::sender(ctx);
         let new_pool = POOL {
             id: object::new(ctx),
-            pool_address: pool_addr,
-            pool_owner: new_pool_owner,
+            addr: pool_addr,
+            owner: new_pool_owner,
             amount: incentive_amount
         };
-        transfer::transfer(new_pool, pool_addr);
         (new_pool, pool_addr)
     }
 }
