@@ -9,12 +9,3 @@
 ![none_escrow](Seq_Diagram_none_use_escrow.drawio.svg)
 -----
 
-## Seq diagram -use escrow- 
------
-[link](https://viewer.diagrams.net/?tags=%7B%7D&highlight=0000ff&edit=_blank&layers=1&nav=1&title=Seq_Diagram_use_escrow.drawio.svg#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fdevan-ko%2Frating_poc%2Fmain%2FSeq_Diagram_use_escrow.drawio.svg)
------
-
------
-![escrow](Seq_Diagram_use_escrow.drawio.svg)
-
------
