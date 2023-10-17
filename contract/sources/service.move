@@ -40,6 +40,12 @@ module contract::service {
         rating: u8,
     }
 
+    struct ProofOfExperience has key, store {
+        id:UID,
+        timestamp: String,
+        
+    }
+
     fun init(ctx: &mut TxContext){
         let service_list = Registery{
             id: object::new(ctx)
@@ -104,5 +110,41 @@ module contract::service {
 
     public fun rating(service: &SERVICE): u8 {
         service.rating
+    }
+
+    public fun publish_service(ctx: &mut TxContext) {
+
+    }
+
+    public fun create_service() {
+
+    }
+
+    public fun mint_poe_mark() {
+
+    }
+
+    public fun send_poe_mark() {
+
+    }
+
+    public fun add_review() {
+
+    }
+
+    public fun add_reviewer() {
+
+    }
+
+    public fun is_reviewer_duplicated():bool {
+
+    }
+
+    public fun add_access_granted_consumer() {
+
+    }
+
+    public fun is_granted_consumer_duplicated():bool {
+
     }
 }

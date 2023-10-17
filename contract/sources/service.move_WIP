@@ -29,18 +29,7 @@ module contract::service {
 
     // structs
 
-    // Service List will show the regiered services to users this will be shared object
-    // because of the this Lists has to be amended by the service owner
-    struct Registery has key, store {
-        id: UID,
-        service_list: Table<>,
-    }
 
-    struct ServiceMetaData has key {
-        id: ID,
-        owner: address,
-        service_address: address
-    }
 
     // Service object belongs to a single address
     // It has
@@ -63,7 +52,7 @@ module contract::service {
         url: String,
         pictures_urls: vector<u8>,
         reviewer_lists: vector<address>,
-        review_list: Table<address,address>, // 
+        review_list: Table<address,Review>, // 
         rating: u8,
     }
 
@@ -72,8 +61,6 @@ module contract::service {
         timestamp: String,
         service_obj: address
     }
-
-
 
     // struct SERVICE_OWNER has key, store, drop {
     //     id: UID,
@@ -114,7 +101,7 @@ module contract::service {
         service.service_pictures_url
     }
 
-    public fun verified_user_lists(service: &SERVICE): VecSet<address> {
+    public fun verified_user_lists(service: &SERVICE): vector<address> {
         service.verified_user_lists
     }
 
@@ -122,27 +109,7 @@ module contract::service {
         service.rating
     }
 
-    // init
-    // shared object transfer which is Registry
-    fun init () {
-        let service_list = Registery{
-            id: object::new(ctx),
-            service_list: VecSet::empty(),
-        };
-        transfer::share_object(service_list)
 
-    }
-    
-
-    // Service register to Service List
-    public fun create_service_registry() {
-
-    }
-    
-    // service object creation
-    public fun create() {
-
-    }
 
 
     // // link pool to service
