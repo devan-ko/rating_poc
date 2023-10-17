@@ -3,7 +3,7 @@
 ## Seq diagram
 
 -----
-![diagram](Seq_Diagramw.drawio.svg)
+![seq_diagram](Seq_Diagramw.drawio.svg)
 -----
 
 ## Object modeling diagram
