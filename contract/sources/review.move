@@ -190,12 +190,14 @@ module contract::review {
     struct AccessTicket has key, store {
         id: UID,
         locked_review_obj_addr: address,
-        writer:address
+        writer: address,
+        sender: address,
     }
 
     public fun create_access_ticket(
         review_obj_addr: address,
-        reviewer:address,
+        reviewer: address,
+        sender: address,
         ctx : &mut TxContext,
     ): AccessTicket {
 
@@ -203,13 +205,15 @@ module contract::review {
             id: object::new(ctx),
             locked_review_obj_addr: review_obj_addr,
             writer: reviewer,
+            sender: sender,
         };
         ticket        
     }     
 
-    public fun full_access_req_to_reviewer (
+    public fun full_access_req (
         locked_review: &Locked,
         reviewer:address,
+        service_owner: address,
         balance: &mut Coin<SUI>,
         tip: u64,
         ctx : &mut TxContext,
@@ -218,28 +222,11 @@ module contract::review {
         assert!(tip < required_tip, ENotEnoughTip);
         assert!(coin::value(balance) < tip, ENotEnoughBalance);
         assert!(coin::value(balance) < required_tip, EBalanceExceedsTip);
+        let consumer = tx_context::sender(ctx);
         let locked_review_addr = object::uid_to_address(&locked_review.id);
-        let ticket = create_access_ticket(locked_review_addr, reviewer, ctx);
-        
-        let send_tip_amount = coin::split(balance, tip, ctx);
-        transfer::public_transfer(ticket, reviewer);
-        transfer::public_transfer(send_tip_amount, reviewer);
+        let ticket = create_access_ticket(locked_review_addr, reviewer, consumer, ctx);
+        let tip_amount = coin::split(balance, tip, ctx);
+        transfer::public_transfer(ticket, service_owner);
+        transfer::public_transfer(tip_amount, reviewer);
     }
-
-
-
-    // public fun full_access_req_to_owner(
-    //     unlocked_review: &Unlocked,
-    //     service: &Service,
-    //     ticket: &AccessTicket
-    //     ctx : &mut TxContext,
-    //     ) {
-    //         assert!(review_obj.writer != reviewer, EReviewerIsNotReviewWriter);
-    //         let sender = tx_context::sender(ctx);
-    //         let ticket = create_full_review_access_auth_req(review_obj_address, reviewer, ctx);
-    //         transfer::transfer(ticket, sender)
-    
-            
-    //     }
-
 }
