@@ -107,7 +107,7 @@ module contract::review {
         );
 
         transfer::public_transfer(locked_review, service);
-        transfer::public_transfer(unlocked_review, writer)
+        transfer::public_transfer(unlocked_review, reviewer)
     }
 
     public fun create_lock_review (
