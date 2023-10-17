@@ -21,7 +21,7 @@ module contract::review {
 
     struct Locked has key, store{
         id: UID, 
-        writer: address,
+        reviewer: address,
         service: address,
         head: String,
         total_score: u8,
@@ -43,7 +43,7 @@ module contract::review {
     }
 
     public fun writer(locked: &Locked): address {
-        locked.writer
+        locked.reviewer
     }    
 
     public fun tip(locked: &Locked): u64 {
@@ -52,7 +52,7 @@ module contract::review {
 
     struct Unlocked has key, store {
         id: UID, 
-        writer: address,
+        reviewer: address,
         service: address,
         body: String,
         up_vote: u8,
@@ -90,17 +90,17 @@ module contract::review {
         service: address,
         tip_amount: Coin<SUI>,
         ctx: &mut TxContext) {
-        let writer = tx_context::sender(ctx);
+        let reviewer = tx_context::sender(ctx);
         
         let locked_review = create_lock_review ( 
-            writer, 
+            reviewer, 
             service, 
             head_contents, 
             tip_amount, 
             ctx
         );
         let unlocked_review = create_unlock_review(
-            writer, 
+            reviewer, 
             service, 
             body_contents, 
             ctx
@@ -111,7 +111,7 @@ module contract::review {
     }
 
     public fun create_lock_review (
-        writer: address,
+        reviewer: address,
         service: address,
         head: String,
         tip_amount: Coin<SUI>,
@@ -120,7 +120,7 @@ module contract::review {
         
         let locked_review = Locked {
             id: object::new(ctx),
-            writer: writer,
+            reviewer: reviewer,
             service: service,
             head: head,
             total_score: 0,
@@ -132,7 +132,7 @@ module contract::review {
     }    
 
     public fun create_unlock_review (
-        writer: address,
+        reviewer: address,
         service: address,
         body_contents: String,
         ctx: &mut TxContext,
@@ -140,7 +140,7 @@ module contract::review {
         
         let unlocked_review = Unlocked {
             id: object::new(ctx),
-            writer: writer,
+            reviewer: reviewer,
             service: service,
             body: body_contents,
             up_vote: 0,
@@ -190,7 +190,7 @@ module contract::review {
     struct AccessTicket has key, store {
         id: UID,
         locked_review_obj_addr: address,
-        writer: address,
+        reviewer: address,
         sender: address,
     }
 
@@ -204,7 +204,7 @@ module contract::review {
         let ticket = AccessTicket {
             id: object::new(ctx),
             locked_review_obj_addr: review_obj_addr,
-            writer: reviewer,
+            reviewer: reviewer,
             sender: sender,
         };
         ticket        
