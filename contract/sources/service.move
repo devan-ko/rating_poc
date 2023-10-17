@@ -105,6 +105,4 @@ module contract::service {
     public fun rating(service: &SERVICE): u8 {
         service.rating
     }
-                
-
 }
