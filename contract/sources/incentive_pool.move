@@ -36,5 +36,11 @@ module contract::incentive_pool {
         // Send pool amount to pool will be executed in ts. 
     }
 
+    public fun send_pool_amount(pool_amount: Coin<SUI>, pool: &POOL, _: &mut TxContext) {        
+        let pool_address = object::uid_to_address(&pool.id);
+        transfer::public_transfer(pool_amount, pool_address)
+
+    }
+
     
 }
